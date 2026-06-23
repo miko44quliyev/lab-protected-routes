@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginForm() {
   const { login } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +23,8 @@ export default function LoginForm() {
       await login(email, password);
       // After login succeeds we send the user to the posts page.
       // (Sending them back to where they came from is a stretch goal.)
-      router.push("/posts");
+      const redirectTo = searchParams.get("redirect") || "/posts";
+      router.push(redirectTo);
     } catch {
       setError("Wrong email or password, or the backend is not running.");
     } finally {
